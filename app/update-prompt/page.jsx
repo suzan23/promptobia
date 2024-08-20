@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect, Suspense } from "react";
 import Form from "@components/Form";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -12,6 +13,8 @@ const UpdatePrompt = () => {
     prompt: "",
     tag: "",
   });
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const getPromptDetails = async () => {
       const response = await fetch(`/api/prompt/${promptId}`);
@@ -20,6 +23,7 @@ const UpdatePrompt = () => {
         prompt: data.prompt,
         tag: data.tag,
       });
+      setLoading(false);
     };
     if (promptId) getPromptDetails();
   }, [promptId]);
@@ -46,8 +50,12 @@ const UpdatePrompt = () => {
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <Suspense>
+    <Suspense fallback={<div>Loading form...</div>}>
       <Form
         type="Edit"
         post={post}
